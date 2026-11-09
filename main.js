@@ -1,87 +1,62 @@
-/* ============================================
-   WARNADI.DEV — Portfolio Interactions
-   ============================================ */
 (function () {
   'use strict';
+  var THEME_KEY = 'wd-theme';
+  var root = document.documentElement;
+  var meta = document.querySelector('meta[name="theme-color"]');
+  var toggleBtn = document.getElementById('wd-theme-toggle');
 
-  /* ---------- 1. AUTO YEAR ---------- */
+  function applyTheme(t) {
+    root.setAttribute('data-theme', t);
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
+    if (toggleBtn) toggleBtn.setAttribute('aria-label', t === 'dark' ? 'Aktifkan tema terang' : 'Aktifkan tema gelap');
+    if (meta) meta.setAttribute('content', t === 'dark' ? '#0a0e1a' : '#f8fafc');
+  }
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function () {
+      applyTheme((root.getAttribute('data-theme') || 'dark') === 'dark' ? 'light' : 'dark');
+    });
+    applyTheme(root.getAttribute('data-theme') || 'dark');
+  }
+
   var yearEl = document.getElementById('wd-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
-  /* ---------- 2. MOBILE MENU ---------- */
-  var toggle = document.querySelector('.wd-menu-toggle');
-  var linksNav = document.querySelector('.wd-nav-links');
-  if (toggle && linksNav) {
-    toggle.addEventListener('click', function () {
-      toggle.classList.toggle('is-active');
-      linksNav.classList.toggle('is-open');
+  var menuBtn = document.getElementById('wd-menu-toggle');
+  var navLinks = document.getElementById('wd-nav-links');
+  if (menuBtn && navLinks) {
+    menuBtn.addEventListener('click', function () {
+      var open = navLinks.classList.toggle('is-open');
+      menuBtn.classList.toggle('is-active', open);
+      menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      document.body.classList.toggle('wd-menu-open', open);
     });
-    linksNav.querySelectorAll('a').forEach(function (a) {
+    navLinks.querySelectorAll('a').forEach(function (a) {
       a.addEventListener('click', function () {
-        toggle.classList.remove('is-active');
-        linksNav.classList.remove('is-open');
+        navLinks.classList.remove('is-open');
+        menuBtn.classList.remove('is-active');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        document.body.classList.remove('wd-menu-open');
       });
     });
-  }
-
-  /* ---------- 3. SCROLL REVEAL ---------- */
-  var reveals = document.querySelectorAll('[data-reveal]');
-  if ('IntersectionObserver' in window) {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          e.target.classList.add('is-revealed');
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    reveals.forEach(function (el) { io.observe(el); });
-  } else {
-    reveals.forEach(function (el) { el.classList.add('is-revealed'); });
-  }
-
-  /* ---------- 4. NAV SCROLL STATE ---------- */
-  var nav = document.querySelector('.wd-nav');
-  if (nav) {
-    var onScroll = function () {
-      nav.classList.toggle('is-scrolled', window.scrollY > 40);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
-
-  /* ---------- 5. ACTIVE NAV LINK (SCROLL SPY) ---------- */
-  var sections = document.querySelectorAll('section[id]');
-  var navAnchors = document.querySelectorAll('.wd-nav-links a[href^="#"]');
-  if (sections.length && navAnchors.length && 'IntersectionObserver' in window) {
-    var map = {};
-    navAnchors.forEach(function (a) {
-      map[a.getAttribute('href').slice(1)] = a;
-    });
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          navAnchors.forEach(function (a) { a.classList.remove('is-active'); });
-          if (map[e.target.id]) map[e.target.id].classList.add('is-active');
-        }
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-    sections.forEach(function (s) { spy.observe(s); });
-  }
-
-  /* ---------- 6. SMOOTH SCROLL WITH NAV OFFSET ---------- */
-  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      var id = a.getAttribute('href');
-      if (id.length > 1) {
-        var target = document.querySelector(id);
-        if (target) {
-          e.preventDefault();
-          var offset = 80;
-          var top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-          window.scrollTo({ top: top, behavior: 'smooth' });
-        }
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 720) {
+        navLinks.classList.remove('is-open');
+        menuBtn.classList.remove('is-active');
+        document.body.classList.remove('wd-menu-open');
       }
     });
+  }
+
+  var nav = document.getElementById('wd-nav');
+  if (nav) {
+    var s = function () { nav.classList.toggle('is-scrolled', window.scrollY > 40); };
+    window.addEventListener('scroll', s, { passive: true });
+    s();
+  }
+
+  var path = window.location.pathname;
+  document.querySelectorAll('.wd-nav-links a').forEach(function (a) {
+    var href = a.getAttribute('href') || '';
+    if (href === path) a.classList.add('is-active');
   });
 })();
