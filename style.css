@@ -2,6 +2,7 @@
    WARNADI.DEV — Portfolio & Blog Theme
    ==================================================== */
 
+
 :root,
 [data-theme="dark"] {
   --bg: #0a0e1a; --surface: #111827; --surface2: #1a2234;
@@ -239,4 +240,59 @@ body.wd-menu-open { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+/* ---------- POST BODY: TYPOGRAPHY LENGKAP ---------- */
+.wd-post-body strong,
+.wd-post-body b {
+  color: var(--text);
+  font-weight: 700;
+}
+.wd-post-body em,
+.wd-post-body i {
+  color: var(--text);
+  font-style: italic;
+}
+.wd-post-body h4 {
+  font-size: 18px;
+  color: var(--text);
+  margin: 24px 0 12px;
+}
+.wd-post-body h5 {
+  font-size: 16px;
+  color: var(--text);
+  margin: 20px 0 10px;
+}
+.wd-post-body hr {
+  border: 0;
+  height: 1px;
+  background: var(--border);
+  margin: 32px 0;
+}
+.wd-post-body figure {
+  margin: 24px 0;
+}
+.wd-post-body figcaption,
+.wd-post-body .tr-caption {
+  color: var(--muted);
+  font-size: 13.5px;
+  text-align: center;
+  margin-top: 8px;
+  font-style: italic;
+}
+.wd-post-body iframe {
+  max-width: 100%;
+  border-radius: 10px;
+  border: 0;
+  margin: 20px 0;
+}
+.wd-post-body ul li::marker,
+.wd-post-body ol li::marker {
+  color: var(--accent);
+}
+.wd-post-body mark {
+  background: rgba(34, 211, 238, 0.2);
+  color: var(--text);
+  padding: 1px 4px;
+  border-radius: 3px;
 }
